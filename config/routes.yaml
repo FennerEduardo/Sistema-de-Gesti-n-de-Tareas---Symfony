@@ -1,6 +1,15 @@
+# ruta para el indice muestra todas las tareas
 tasks:
     path: /
     controller: App\Controller\TaskController::index
+# Ruta para mostrar el detalle de cada tarea
+task_detail:
+    path: /tarea{id}
+    controller: App\Controller\TaskController::detail
+# Ruta para crear una tarea
+task_creation:
+    path: /crear-tarea
+    controller: App\Controller\TaskController::creation
 
 # Ruta para el registro de Usuarios
 register:
