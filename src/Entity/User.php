@@ -2,7 +2,13 @@
 
 namespace App\Entity;
 
+//Cargar libreria para crear coleccionesde arrays
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+//Usar la interface de seguridad para la password
+use Symfony\Component\Security\Core\User\UserInterface;
+
 
 /**
  * User
@@ -10,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="users")
  * @ORM\Entity
  */
-class User
+class User implements UserInterface
 {
     /**
      * @var int
@@ -62,6 +68,15 @@ class User
      * @ORM\Column(name="created_at", type="datetime", nullable=true)
      */
     private $createdAt;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Task", mappedBy="user")
+     */
+    private $tasks;
+
+    public function __construct(){
+        $this->tasks = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -128,17 +143,38 @@ class User
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt()
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?\DateTimeInterface $createdAt): self
+    public function setCreatedAt($createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
+    /**
+     * @return Collection|Task[]
+    */    
+    public function getTasks(): Collection
+    {
+        return $this->tasks;
+    }
 
+    //Agregando métodos obligatorios de la interface de seguridad y que funcione la autenticación
+    public function getUsername(){
+        return $this->email;
+    }
+
+    public function getSalt(){
+        return null;
+    }
+
+    public function getRoles(){
+        return array('ROLE_USER');
+    }
+
+    public function eraseCredentials(){}
 }
