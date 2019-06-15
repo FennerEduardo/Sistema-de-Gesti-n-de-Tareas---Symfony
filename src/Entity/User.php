@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 //Usar la interface de seguridad para la password
 use Symfony\Component\Security\Core\User\UserInterface;
+//Usar la clase de constraints para colocar las restricciones de seguridad con un alías: Assert
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
@@ -38,6 +40,8 @@ class User implements UserInterface
      * @var string|null
      *
      * @ORM\Column(name="name", type="string", length=100, nullable=true)
+     * @Assert\NotBlank
+     * @Assert\Regex("/[a-zA-Z ]+/")
      */
     private $name;
 
@@ -45,6 +49,8 @@ class User implements UserInterface
      * @var string|null
      *
      * @ORM\Column(name="surname", type="string", length=200, nullable=true)
+     * @Assert\NotBlank
+     * @Assert\Regex("/[a-zA-Z ]+/")
      */
     private $surname;
 
@@ -52,6 +58,11 @@ class User implements UserInterface
      * @var string|null
      *
      * @ORM\Column(name="email", type="string", length=255, nullable=true)
+     * @Assert\NotBlank
+     * @Assert\Email(
+     *      message = "El email '{{ value }}' no es valido",
+     *      checkMX = true
+     * )
      */
     private $email;
 
@@ -59,6 +70,7 @@ class User implements UserInterface
      * @var string|null
      *
      * @ORM\Column(name="password", type="string", length=255, nullable=true)
+     * @Assert\NotBlank
      */
     private $password;
 

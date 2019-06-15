@@ -27,6 +27,7 @@ class TaskController extends AbstractController
         }
         */
 
+        /*
         //Obtener todos los usuarios y las tareas asignadas
         $user_repo = $this->getDoctrine()->getRepository(User::class);
         $users = $user_repo->findAll();
@@ -39,7 +40,7 @@ class TaskController extends AbstractController
                 echo $task->getTitle().'<br>';
             }
         }
-
+        */
 
         return $this->render('task/index.html.twig', [
             'controller_name' => 'TaskController',

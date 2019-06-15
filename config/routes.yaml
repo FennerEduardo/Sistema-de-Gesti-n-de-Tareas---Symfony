@@ -1,8 +1,18 @@
 tasks:
-    path: /tasks
+    path: /
     controller: App\Controller\TaskController::index
 
 # Ruta para el registro de Usuarios
 register:
     path: /registro
     controller: App\Controller\UserController::register
+
+# Ruta para el login 
+login:
+    path: /login
+    controller: App\Controller\UserController::login
+
+# Ruta para el logout
+logout:
+    path: /logout
+    

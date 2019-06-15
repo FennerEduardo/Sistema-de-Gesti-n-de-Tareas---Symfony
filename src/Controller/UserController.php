@@ -13,6 +13,9 @@ use App\Entity\User;
 use App\Form\RegisterType;
 //Usar el encoder de encriptamiento de password
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+//Usar las utilidades de autenticación
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+
 
 
 class UserController extends AbstractController
@@ -27,7 +30,7 @@ class UserController extends AbstractController
         //Vincular el formulario con el objeto -Rellenar el objeto con los datos del form
         $form->handleRequest($request);
         //Comprobar sí el formulario está enviado
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
           //Modificando el objeto para guardarlo
             //Insertando el valor del role
             $user->setRole('ROLE_USER');
@@ -49,5 +52,19 @@ class UserController extends AbstractController
         return $this->render('user/register.html.twig', [
             'form' => $form->createView()
         ]);
+    }
+    
+    //Método de login con las utilidades de autenticación como parametro 
+    public function login(AuthenticationUtils $authenticationUtils)
+    {
+        // se almacenan los errores de autenticación en una variable
+        $error = $authenticationUtils->getLastAuthenticationError();
+        //Obtener el nombre de usuario del último usuario que intenta hacer login
+        $lastUsername = $authenticationUtils->getLastUsername();
+        //Retornar una vista
+        return $this->render('user/login.html.twig', array(
+            'error' => $error,
+            'last_username' => $lastUsername
+        ));
     }
 }
