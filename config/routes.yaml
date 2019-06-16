@@ -1,6 +1,6 @@
 # ruta para el indice muestra todas las tareas
 tasks:
-    path: /
+    path: /tareas
     controller: App\Controller\TaskController::index
 # Ruta para mostrar el detalle de cada tarea
 task_detail:
@@ -10,6 +10,18 @@ task_detail:
 task_creation:
     path: /crear-tarea
     controller: App\Controller\TaskController::creation
+# Ruta para listar las tareas de cada usuario
+my_tasks:
+    path: /mis-tareas
+    controller: App\Controller\TaskController::myTasks
+# Ruta para editar las tareas
+task_edit:
+    path: /editar-tarea{id}
+    controller: App\Controller\TaskController::edit
+# Ruta para eliminar las tareas
+task_delete:
+    path: /tarea/delete/{id}
+    controller: App\Controller\TaskController::delete
 
 # Ruta para el registro de Usuarios
 register:
@@ -18,7 +30,7 @@ register:
 
 # Ruta para el login 
 login:
-    path: /login
+    path: /
     controller: App\Controller\UserController::login
 
 # Ruta para el logout

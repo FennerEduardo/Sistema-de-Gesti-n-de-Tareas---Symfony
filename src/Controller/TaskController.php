@@ -13,6 +13,8 @@ use App\Entity\Task;
 use App\Entity\User;
 //Cargar el formulario para crear tareas
 use App\Form\TaskType;
+//Usar la interface de seguridad para la password
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class TaskController extends AbstractController
 {
@@ -58,7 +60,7 @@ class TaskController extends AbstractController
     }
 
     //Método para la creación de tareas
-    public function creation(Request $request, \Symfony\Component\Security\Core\User\UserInterface $user )
+    public function creation(Request $request, UserInterface $user)
     {
         // se crea objeto de tareas
         $task = new Task();
@@ -83,7 +85,73 @@ class TaskController extends AbstractController
         }
         //retornando la vista
         return $this->render('task/creation.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'edit' => false
         ]);
+    }
+
+    //Método para listar las tareas del usuario logueado
+    public function myTasks(UserInterface $user)
+    {
+        //Obtener las tareas del usuario
+        $tasks = $user->getTasks();
+        //Retornar en una vista las tareas a través de la variable
+        return $this->render('task/my-tasks.html.twig', [
+            'tasks' => $tasks
+        ]);
+    }
+
+    //Método para la edición de tareas
+    public function edit(Request $request, UserInterface $user, Task $task)
+    {
+        if (!$user || $user->getId() != $task->getUser()->getId()) {
+           return $this->redirectToRoute('tasks');
+        }
+        
+        
+        // se Incluye el formulario en una variable para pasarlo a la vista
+        $form = $this->createForm(TaskType::class, $task);
+        // Unir el formulario con la tarea
+        $form->handleRequest($request);
+        //Comprobando que el formulario llega con los datos de la tarea
+        if ($form->isSubmitted() && $form->isValid()) {
+            $task->setCreatedAt(new \Datetime('now'));
+            //$task->setUser($user);
+
+            //Guardando el objeto en la base de datos
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($task);
+            $em->flush();
+
+            //Redirección después de crear la nueva tarea
+            return $this->redirect(
+                $this->generateUrl('task_detail', ['id' => $task->getId()])
+            );
+        }
+        
+        //Retornar vista para la edición
+        return $this->render('task/creation.html.twig', [
+            'edit' => true,
+            'form' => $form->createView()
+
+        ]);
+    }
+
+    //Método para borrar una tarea
+    public function delete(UserInterface $user, Task $task)
+    {
+        if (!$user || $user->getId() != $task->getUser()->getId()) {
+            return $this->redirectToRoute('tasks');
+        }
+         //Sí la tarea no existe redirecciona al inicio
+         if (!$task) {
+             return $this->redirectToRoute('tasks');
+        }
+        //Eliminar la tarea
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($task);
+        $em->flush();
+
+        return $this->redirectToRoute('tasks');
     }
 }
